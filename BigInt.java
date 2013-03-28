@@ -166,6 +166,10 @@ public class BigInt
     int carry=0;
     int column;
     BigInt smallerOne, largerOne;
+    if (this.compare(anotherBigInt)==0 )
+    {
+      return new BigInt("0");
+    }
     if (this.compare(anotherBigInt)==-1 )
     {
       largerOne = new BigInt(anotherBigInt.toString());
@@ -178,14 +182,14 @@ public class BigInt
     }
     smallerOne.checkOtherArrayLength(largerOne);
     char[] diff=makeZeroArray();
-    for (int t=0; t<this.getArrayLength(); t++)
+    for (int t=0; t<largerOne.getArrayLength(); t++)
     {
       column=carry +
              Character.getNumericValue(largerOne.numberArray[t]) -
              Character.getNumericValue(smallerOne.numberArray[t]);
-      if (column <= 0 )
+      if (column < 0 )
       {
-        diff[t]=Character.forDigit(column-10, 10);
+        diff[t]=Character.forDigit(column+10, 10);
         carry=-1;
       }
       else
@@ -217,18 +221,19 @@ public class BigInt
   }
 
 
-  public String deleteTrailingZeros(String numberStr2)
+  public String deleteTrailingZeros(String numberStr)
   {
-    int firstNonZeroFromEnd=numberStr2.length();
-    for (int s=numberStr2.length()-1; s>=0; s--)
+    int firstNonZeroFromEnd=numberStr.length();
+    for (int s=numberStr.length()-1; s>=0; s--)
     {
-      if (numberStr2.charAt(s)!='0' && numberStr2.charAt(s)!='\0')
+      firstNonZeroFromEnd=s;
+      if (numberStr.charAt(s)!='0' && numberStr.charAt(s)!='\0')
       {
-        firstNonZeroFromEnd=s;
         break;
       }
     }
-    return numberStr2.substring( 0, firstNonZeroFromEnd+1 );
+    if (firstNonZeroFromEnd<=0) return "0";
+    else return numberStr.substring( 0, firstNonZeroFromEnd+1 );
   }
 
 
@@ -240,7 +245,7 @@ public class BigInt
     }
   }
 
-  
+
   public int compare(BigInt otherBigInt)
   {
     checkOtherArrayLength(otherBigInt);
