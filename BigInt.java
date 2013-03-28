@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 
 public class BigInt
@@ -63,7 +65,7 @@ public class BigInt
   {
     char[] newArray = new char[getArrayLength()];
     for (int r=0; r<getArrayLength(); r++)
-    { 
+    {
       newArray[r] = '0';
     }
     return newArray;
@@ -115,7 +117,7 @@ public class BigInt
     return arrayLength;
   }
 
-  
+
   public String toString()
   {
     setLengthUsed();
@@ -159,6 +161,47 @@ public class BigInt
   }
 
 
+  public BigInt difference(BigInt anotherBigInt)
+  {
+    int carry=0;
+    int column;
+    BigInt smallerOne, largerOne;
+    if (this.compare(anotherBigInt)==-1 )
+    {
+      largerOne = new BigInt(anotherBigInt.toString());
+      smallerOne = new BigInt(this.toString());
+    }
+    else
+    {
+      largerOne = new BigInt(this.toString());
+      smallerOne = new BigInt(anotherBigInt.toString());
+    }
+    smallerOne.checkOtherArrayLength(largerOne);
+    char[] diff=makeZeroArray();
+    for (int t=0; t<this.getArrayLength(); t++)
+    {
+      column=carry +
+             Character.getNumericValue(largerOne.numberArray[t]) -
+             Character.getNumericValue(smallerOne.numberArray[t]);
+      if (column <= 0 )
+      {
+        diff[t]=Character.forDigit(column-10, 10);
+        carry=-1;
+      }
+      else
+      {
+        diff[t]=Character.forDigit(column, 10);
+        carry=0;
+      }
+    }
+    String diffString = "";
+    for (int u=0; u<diff.length; u++)
+    {
+      diffString = diff[u] + diffString;
+    }
+    return new BigInt( deleteLeadingZeros(diffString) );
+  }
+
   public String deleteLeadingZeros(String numberStr)
   {
     int firstNonZero=0;
@@ -173,7 +216,7 @@ public class BigInt
     return numberStr.substring( firstNonZero, numberStr.length() );
   }
 
-  
+
   public String deleteTrailingZeros(String numberStr2)
   {
     int firstNonZeroFromEnd=numberStr2.length();
@@ -191,7 +234,6 @@ public class BigInt
 
   public void displayArrayContents()
   {
-    
     for (char itemThis : this.numberArray)
     {
       System.out.print(itemThis+ " ");
